@@ -24,10 +24,12 @@
       <div class="sessao-conteudo">
         <label for="name">Nome:</label>
         <input type="text" id="nome" name="name">
-        <label for="name">Idade:</label>
+        <label for="idade">Idade:</label>
+        <input type="text" id="titulo" name="titulo">
+        <label for="titulo">titulo(Graduação,Mestrado ou Doutor):</label>
         <input type="text" id="idade" name="idade">
-        <label for="especialidade">Especialidade:</label>
-        <input type="text" id="especialidade" name="especialidade">
+        <label for="linha_de_pesquisa">linha de pesquisa:</label>
+        <input type="text" id="linha_de_pesquisa" name="linha_de_pesquisa">
         <button type="submit">Criar</button>
       </div>
 
@@ -39,6 +41,8 @@
     <ul id="item-list"></ul>
 
   </div>
+  <br>
+  <br>
 
   <footer>
     <div>
@@ -55,67 +59,7 @@
       </div>
     </div>
   </footer>
-  <script>
-    const form = document.getElementById('create-form');
-    const itemList = document.getElementById('item-list');
-
-    // Função para salvar os itens na Local Storage
-    function saveItems(items) {
-      localStorage.setItem('items', JSON.stringify(items));
-    }
-
-    // Função para carregar os itens da Local Storage
-    function loadItems() {
-      const items = JSON.parse(localStorage.getItem('items'));
-      if (items) {
-        return items;
-      } else {
-        return [];
-      }
-    }
-
-    // Função para exibir os itens na tela
-    function renderItems(items) {
-      itemList.innerHTML = '';
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        const li = document.createElement('li');
-        li.innerHTML = `<strong>${item.nome} - ${item.idade} anos</strong> Especialista em ${item.especialidade}`;
-        const deleteButton = document.createElement('button');
-        deleteButton.className = "btn-remove"
-        deleteButton.innerText = 'Excluir';
-        deleteButton.addEventListener('click', () => {
-          items.splice(i, 1);
-          saveItems(items);
-          renderItems(items);
-        });
-        li.appendChild(deleteButton);
-        itemList.appendChild(li);
-      }
-    }
-
-    // Carrega os itens da Local Storage ao carregar a página
-    const items = loadItems();
-    renderItems(items);
-
-    // Adiciona um novo item
-    form.addEventListener('submit', async(event) => {
-      event.preventDefault();
-      const nome = document.querySelector('#nome').value;
-      console.log(nome)
-      const especialidade = document.querySelector('#especialidade').value;
-      const idade = document.querySelector('#idade').value;
-      const newItem = {
-        nome,
-        especialidade,
-        idade
-      };
-      items.push(newItem);
-      saveItems(items);
-      renderItems(items);
-      form.reset();
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 
 </html>
