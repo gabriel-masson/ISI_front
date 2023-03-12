@@ -1,96 +1,75 @@
-/*
-const items = loadItems();
-let id = 0
-const table = document.querySelector("#table-info");
-const nome = document.querySelector("#name")
-const idade = document.querySelector("#idade")
-const especialidade = document.querySelector("#especialidade")
-const criar = document.querySelector("#criar")
-const editar = document.querySelector("#teste")
-
 const form = document.getElementById('create-form');
-const tableBody = document.getElementById("table-body")
+const itemList = document.getElementById('item-list');
 
-function renderItems() {
-    alert(oi)
-    console.log(items)
-    itemList.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${items.map((item, index) => `
-            <tr>
-              <td>${nome.value}</td>
-              <td>${nome.value}</td>
-              <td>
-                <button data-index="${nome.value}">Excluir</button>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
-    
-    // Adiciona o evento de clique para os botões de exclusão
-    const deleteButtons = itemList.querySelectorAll('button');
-    deleteButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const index = button.getAttribute('data-index');
-        items.splice(index, 1);
-        saveItems(items);
-        renderItems(items);
-      });
-    });
-  }
-// Adiciona um novo item
-form.addEventListener('submit', event => {
-    event.preventDefault();
-    console.log(especialidade.value)
-    console.log(idade.value)
-    console.log(nome.value)
-    id++
-    const newItem = {
-        id,
-        nome: nome.value,
-        idade: idade.value,
-        especialidade: especialidade.value
-
-    };
-    items.push(newItem);
-    saveItems(items);
-    console.log(items)
-    form.reset();
-});
 // Função para salvar os itens na Local Storage
 function saveItems(items) {
-    localStorage.setItem('items', JSON.stringify(items));
+  localStorage.setItem('items', JSON.stringify(items));
 }
 
 // Função para carregar os itens da Local Storage
-function loadItems() {
-    const items = JSON.parse(localStorage.getItem('items'));
-    if (items) {
-        return items;
-    } else {
-        return [];
-    }
+// não funciona
+async function loadItems() {
+  let itens = await fetch("http://localhost:3000/api/aluno", {
+    method: "GET",
+    mode: "no-cors",
+  });
+  console.log(itens)
+  if (itens) {
+    return itens;
+  } else {
+    return [];
+  }
 }
 
-function oi() {
-    let url = String(window.location.href);
-    let id = url.split("=")[1]
-    for (let i = 0; i < data.length; i++) {
-        if (data[i].id == id) {
-            console.log(data[i])
-        }
-    }
-    console.log(data)
+// Função para exibir os itens na tela
+async function renderItems() {
+  itemList.innerHTML = '';
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const li = document.createElement('li');
+    li.innerHTML = `<strong>${item.nome} - ${item.idade} anos - </strong>titulo de ${item.titulo} com linha de pesquisa em ${item.linha_de_pesquisa}`;
+    const deleteButton = document.createElement('button');
+    deleteButton.className = "btn-remove"
+    deleteButton.innerText = 'Excluir';
+    deleteButton.addEventListener('click', () => {
+      items.splice(i, 1);
+      saveItems(items);
+      renderItems(items);
+    });
+    li.appendChild(deleteButton);
+    itemList.appendChild(li);
+  }
 }
 
-*/
+// Carrega os itens da Local Storage ao carregar a página
+const items = loadItems();
+renderItems(items);
+
+// Adiciona um novo item
+//funciona direitinho
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const nome = document.querySelector('#nome').value;
+  console.log(nome)
+  const linha_de_pesquisa = document.querySelector('#linha_de_pesquisa').value;
+  const idade = document.querySelector('#idade').value;
+  const titulo = document.querySelector('#titulo').value;
+
+
+  let i = await fetch(`http://localhost:3000/api/aluno?nome=${nome}&linha_de_pesquisa=${linha_de_pesquisa}&idade=${idade}&titulo=${titulo}`, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+
+    //make sure to serialize your JSON body
+    body: JSON.stringify({ })
+  })
+
+  
+ 
+  await renderItems();
+  form.reset();
+});
